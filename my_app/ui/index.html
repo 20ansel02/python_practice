@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Front-end</title>
+</head>
+<body>
+    <!-- frontend to fetch all fruits from the db fruits table fruits also to get fruit by id also to add fruit -->
+    <h1>Fruits</h1>
+    <button id="fetchFruits">Fetch Fruits</button>
+    <button id="addFruit">Add Fruit</button>
+    <button id="getFruitById">Get Fruit By ID</button>
+    <div id="fruitsList"></div>
+    <div id="fruitDetails"></div>
+    <script>
+        document.getElementById('fetchFruits').addEventListener('click', async () => {
+          const response = await fetch('/api/fruit');
+          const fruits = await response.json();
+          const fruitsList = document.getElementById('fruitsList');
+          fruitsList.innerHTML = '';
+          fruits.forEach(fruit => {
+            const fruitDiv = document.createElement('div');
+            fruitDiv.innerText = `ID: ${fruit.id}, Name: ${fruit.name}, Color: ${fruit.color}, Weight: ${fruit.weight}kg, Price: \u20B9${fruit.price_per_kg}/kg`;
+            fruitsList.appendChild(fruitDiv);
+          });
+        });
+    
+        document.getElementById('addFruit').addEventListener('click', async () => {
+          const name = prompt("Enter fruit name:");
+          const color = prompt("Enter fruit color:");
+          const weight = prompt("Enter fruit weight (kg):");
+          const price = prompt("Enter price per kg (₹):");
+    
+          if (name && color && weight && price) {
+            const response = await fetch('/api/fruit', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                name,
+                color,
+                weight: parseFloat(weight),
+                price_per_kg: parseFloat(price)
+              })
+            });
+    
+            if (response.ok) {
+              alert("Fruit added successfully!");
+            } else {
+              alert("Failed to add fruit.");
+            }
+          }
+        });
+    
+        document.getElementById('getFruitById').addEventListener('click', async () => {
+          const id = prompt("Enter fruit ID:");
+          if (id) {
+            const response = await fetch(`/api/fruit/${id}`);
+            const fruitDetails = document.getElementById('fruitDetails');
+            if (response.ok) {
+              const fruit = await response.json();
+              fruitDetails.innerHTML = `ID: ${fruit.id}, Name: ${fruit.name}, Color: ${fruit.color}, Weight: ${fruit.weight}kg, Price: \u20B9${fruit.price_per_kg}/kg`;
+            } else {
+              fruitDetails.innerHTML = '';
+              alert("Fruit not found.");
+            }
+          }
+        });
+      </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #fruitsList, #fruitDetails {
+            margin-top: 20px;
+        }
+        #fruitsList div, #fruitDetails {
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        #fruitDetails {
+            background-color: #f9f9f9;
+        }
+        #fruitsList div {
+            background-color: #e9ecef;
+        }
+    </style>
+</body>
+</html>
