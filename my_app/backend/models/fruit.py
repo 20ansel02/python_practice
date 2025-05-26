@@ -7,7 +7,7 @@ class Fruit(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
     color = Column(String)
-    weight = Column(Float)
+    weight_column = Column(Float)
     price_per_kg = Column(Float)
     new_col = Column(String) 
     quantity = Column(Integer)
